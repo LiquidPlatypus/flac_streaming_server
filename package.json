@@ -1,0 +1,13 @@
+{
+  "name": "flac_streaming_server",
+  "version": "1.0.0",
+  "description": "Server streaming FLAC files to a mobile phone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
