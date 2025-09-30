@@ -136,6 +136,6 @@ dist
 .pnp.*
 
 .idea/modules.xml
-.idea
+.idea/
 
 /generated/prisma
