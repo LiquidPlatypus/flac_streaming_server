@@ -4,8 +4,8 @@
   "description": "Server streaming FLAC files to a mobile phone",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch server.js"
+    "dev": "tsx watch server.ts",
+    "start": "tsx server.ts"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,8 @@
   "type": "module",
   "dependencies": {
     "@fastify/static": "^8.2.0",
+    "@joggr/fastify-prisma": "^6.0.1",
+    "@prisma/client": "^6.16.3",
     "fastify": "^5.6.1"
   },
   "devDependencies": {

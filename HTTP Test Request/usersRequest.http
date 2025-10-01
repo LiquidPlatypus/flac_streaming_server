@@ -2,7 +2,7 @@ POST http://127.0.0.1:3000/api/users
 Content-Type: application/json
 
 {
-  "name": "VVPOIROT",
-  "email": "vvpoirotemail@42.com",
+  "name": "POIROTLEGOAT",
+  "email": "poirotlegoatemail@42.com",
   "age": 58
 }
