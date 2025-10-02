@@ -1,6 +1,6 @@
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest} from "fastify";
-import fastifyPrisma from "@joggr/fastify-prisma";
 import { PrismaClient } from "./generated/prisma";
+import prismaPlugin from "./plugins/prismaPlugin.ts";
 
 declare module "fastify" {
 	interface FastifyInstance {
@@ -37,13 +37,12 @@ async function userRoutes(fastify: FastifyInstance) {
 				},
 			});
 
-			return reply.code(201).send(body);
+			return reply.code(201).send(newUser);
 		},
 	});
 }
-await fastify.register(fastifyPrisma, {
-	client: new PrismaClient(),
-});
+
+fastify.register(prismaPlugin);
 fastify.register(userRoutes, {prefix: "/api/users"});
 
 async function main() {
