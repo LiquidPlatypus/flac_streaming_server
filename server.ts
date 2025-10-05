@@ -1,4 +1,4 @@
-import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest} from "fastify";
+import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from "fastify";
 import { PrismaClient } from "./generated/prisma";
 import prismaPlugin from "./plugins/prismaPlugin.ts";
 
@@ -18,32 +18,53 @@ const fastify = Fastify({
 
 async function userRoutes(fastify: FastifyInstance) {
 	fastify.post("/", {
-		handler: async(
+		schema: {
+			body: {
+				type: "object",
+				required: ["name", "email"],
+				properties: {
+					name: { type: "string", minLength: 3 },
+					email: { type: "string", format: "email" },
+				},
+			},
+		},
+		handler: async (
 			request: FastifyRequest<{
 				Body: {
 					name: string;
-					age: number;
+					email: string;
 				};
 			}>,
-			reply: FastifyReply
+			reply: FastifyReply,
 		) => {
 			const body = request.body;
 
-			const newUser = await fastify.prisma.user.create({
-				data: {
-					email: "poirotlegoat@42email.com",
-					name: body.name,
-					age: body.age,
-				},
-			});
+			try {
+				const newUser = await fastify.prisma.user.create({
+					data: {
+						email: body.email,
+						name: body.name,
+					},
+				});
 
-			return reply.code(201).send(newUser);
+				return reply.code(201).send(newUser);
+			} catch (error: any) {
+				if (error.code === "P2002") {
+					return reply.code(409).send({
+						statusCode: 409,
+						error: "Conflict",
+						message: "An User already exists with that email address",
+					});
+				}
+
+				throw error;
+			}
 		},
 	});
 }
 
 fastify.register(prismaPlugin);
-fastify.register(userRoutes, {prefix: "/api/users"});
+fastify.register(userRoutes, { prefix: "/api/users" });
 
 async function main() {
 	await fastify.listen({
