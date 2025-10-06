@@ -12,7 +12,56 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
+  id         String     @id @default(uuid())
+  usernaname String
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now())
+  playlists  Playlist[]
+  favorties  Favorite[]
+}
+
+model Track {
+  id         String          @id @default(uuid())
+  title      String
+  artist     String
+  album      String
+  filepath   String          @unique
+  duration   Int // en secondes
+  filesize   BigInt
+  bitrate    Int?
+  sampleRate Int?
+  coverArt   String?
+  createdAt  DateTime        @default(now())
+  playlists  PlaylistTrack[]
+  favorites  Favorite[]
+}
+
+model Playlist {
+  id        String          @id @default(uuid())
+  name      String
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  tracks    PlaylistTrack[]
+  createdAt DateTime        @default(now())
+}
+
+model PlaylistTrack {
+  playlistId String
+  trackId    String
+  position   Int
+  playlist   Playlist @relation(fields: [playlistId], references: [id])
+  track      Track    @relation(fields: [trackId], references: [id])
+
+  @@id([playlistId, trackId])
+}
+
+model Favorite {
+  userId    String
+  trackId   String
+  user      User     @relation(fields: [userId], references: [id])
+  track     Track    @relation(fields: [trackId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, trackId])
 }
