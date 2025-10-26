@@ -12,29 +12,53 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  usernaname String
-  email      String     @unique
-  password   String
-  createdAt  DateTime   @default(now())
-  playlists  Playlist[]
-  favorties  Favorite[]
+  id        String      @id @default(uuid())
+  username  String
+  email     String      @unique
+  password  String
+  createdAt DateTime    @default(now())
+  playlists Playlist[]
+  favorites Favorite[]
+  library   UserTrack[]
+}
+
+model UserTrack {
+  id      String   @id @default(uuid())
+  userId  String
+  trackId String
+  addedAt DateTime @default(now())
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId])
+  @@index([userId]) // Optimisation pour requêtes fréquentes
 }
 
 model Track {
-  id         String          @id @default(uuid())
+  id String @id @default(uuid())
+
+  // Métadonnées du morceau
   title      String
   artist     String
   album      String
-  filepath   String          @unique
   duration   Int // en secondes
-  filesize   BigInt
   bitrate    Int?
   sampleRate Int?
   coverArt   String?
-  createdAt  DateTime        @default(now())
-  playlists  PlaylistTrack[]
-  favorites  Favorite[]
+
+  // Fichier physique
+  filePath String @unique // Chemin vers fichier physique
+  fileHash String @unique // Hash du contenu (SHA256 par exemple)
+  fileSize BigInt
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  playlists PlaylistTrack[]
+  favorites Favorite[]
+  users     UserTrack[] // Users ayant le morceau dans leur bibliothèque
 }
 
 model Playlist {
